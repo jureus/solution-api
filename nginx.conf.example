@@ -1,0 +1,16 @@
+# nginx.conf.example
+# Пример настройки location для API модуля
+
+location /api/ {
+    # Пытаемся отдать файл, если он существует (вряд ли, но стандарт)
+    try_files $uri $uri/ @bitrix_api;
+}
+
+location @bitrix_api {
+    # Перенаправляем все запросы API на наш загрузчик
+    # $document_root/local/api_loader.php
+
+    fastcgi_pass php-upstream; # Или 127.0.0.1:9000
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root/local/api_loader.php;
+}

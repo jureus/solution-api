@@ -1,0 +1,150 @@
+openapi: 3.0.3
+info:
+  title: Bitrix E-Shop REST API
+  description: Тестовое задание. API для каталога одежды.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Локальный сервер разработки
+
+paths:
+  /categories:
+    get:
+      summary: Вывод списка категорий каталога «Одежда»
+      operationId: getCategories
+      responses:
+        '200':
+          description: Дерево категорий
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+
+  /categories/{categoryId}/products:
+    get:
+      summary: Вывод списка товаров в заданной категории
+      operationId: getProductsByCategory
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список товаров
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductList'
+
+  /products/{productId}:
+    get:
+      summary: Вывод детальной информации о товаре
+      operationId: getProductDetail
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Детальная информация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductDetail'
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        url:
+          type: string
+          description: Детальная страница категории
+        picture:
+          type: string
+          nullable: true
+          description: Ссылка на картинку
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+
+    ProductList:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        url:
+          type: string
+          description: Детальная страница товара
+        picture:
+          type: string
+          nullable: true
+        price_from:
+          type: number
+          description: Цена "от"
+
+    ProductDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        url:
+          type: string
+        gallery:
+          type: array
+          items:
+            type: string
+          description: Галерея товара
+        properties:
+          type: object
+          properties:
+            brand:
+              type: string
+            manufacturer:
+              type: string
+            material:
+              type: string
+        offers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Offer'
+
+    Offer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        article:
+          type: string
+        color:
+          type: string
+        size:
+          type: string
